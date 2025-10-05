@@ -173,6 +173,87 @@ func sendWhatsAppTemplateMessage(token, to, templateName, languageCode string) e
 	return nil
 }
 
+type ImageMessage struct {
+	MessagingProduct string `json:"messaging_product"`
+	To               string `json:"to"`
+	Type             string `json:"type"`
+	Image            struct {
+		Link string `json:"link"`
+	} `json:"image"`
+}
+
+func handleGreetingRequest(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodDelete {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	handleGreeting()
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Greeting messages sent"))
+}
+
+func handleGreeting() {
+	token = os.Getenv("VERIFICATION_TOKEN")
+	err := sendWhatsAppImageMessage(token, "919891594807", "https://i.postimg.cc/59PLsmpv/Whats-App-Image-2025-10-04-at-12-44-28.jpg")
+	if err != nil {
+		fmt.Println("Error sending image message:", err)
+	}
+	err = sendWhatsAppImageMessage(token, "919891594807", "https://i.ibb.co/TMWDBndN/Whats-App-Image-2025-10-04-at-12-44-28-1.jpg")
+	if err != nil {
+		fmt.Println("Error sending image message:", err)
+	}
+	err = sendWhatsAppTemplateMessage(token, "919891594807", "welcome_athens_new", "en")
+	if err != nil {
+		fmt.Println("Error sending template message:", err)
+	}
+	err = sendWhatsAppTemplateMessage(token, "919891594807", "faq", "en")
+	if err != nil {
+		fmt.Println("Error sending template message:", err)
+	}
+}
+
+func sendWhatsAppImageMessage(accessToken, recipient, imageURL string) error {
+	url := "https://graph.facebook.com/v22.0/776012848931729/messages"
+	// Prepare message payload
+	payload := ImageMessage{
+		MessagingProduct: "whatsapp",
+		To:               recipient,
+		Type:             "image",
+	}
+	payload.Image.Link = imageURL
+
+	// Convert to JSON
+	jsonData, err := json.Marshal(payload)
+	if err != nil {
+		return fmt.Errorf("failed to marshal JSON: %v", err)
+	}
+
+	// Create request
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
+	if err != nil {
+		return fmt.Errorf("failed to create request: %v", err)
+	}
+
+	// Set headers
+	req.Header.Set("Authorization", "Bearer "+accessToken)
+	req.Header.Set("Content-Type", "application/json")
+
+	// Send request
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return fmt.Errorf("failed to send request: %v", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
+		return fmt.Errorf("failed to send message, status: %s", resp.Status)
+	}
+
+	fmt.Println("✅ WhatsApp image message sent successfully!")
+	return nil
+}
+
 func main() {
 	http.HandleFunc("/webhooks", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
@@ -180,6 +261,8 @@ func main() {
 			handleGetWebhook(w, r)
 		case http.MethodPost:
 			handlePostWebhook(w, r)
+		case http.MethodDelete:
+			handleGreetingRequest(w, r)
 		default:
 			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		}
