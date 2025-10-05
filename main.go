@@ -254,6 +254,11 @@ func sendWhatsAppImageMessage(accessToken, recipient, imageURL string) error {
 	return nil
 }
 
+func handleHealthCheck(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Server is healthy"))
+}
+
 func main() {
 	http.HandleFunc("/webhooks", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
@@ -263,6 +268,8 @@ func main() {
 			handlePostWebhook(w, r)
 		case http.MethodDelete:
 			handleGreetingRequest(w, r)
+		case http.MethodPut:
+			handleHealthCheck(w, r)
 		default:
 			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		}
