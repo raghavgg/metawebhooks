@@ -23,7 +23,7 @@ type TemplateMessage struct {
 
 // Webhook verification token (set in your Meta App settings)
 var verifyToken = "331959e6-a3ba-891d-b3ea-d3737dceb4c20e"
-var token = ""
+var token = os.Getenv("VERIFICATION_TOKEN")
 
 // Struct for POST webhook body
 type WebhookEvent struct {
