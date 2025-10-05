@@ -23,7 +23,7 @@ type TemplateMessage struct {
 
 // Webhook verification token (set in your Meta App settings)
 var verifyToken = "331959e6-a3ba-891d-b3ea-d3737dceb4c20e"
-var token = "EAA89Nt0fFasBPqCVvHVO8sac5ZANP9JvLJWvZAiXD6E91wpJfZCX5jrGMjfoIZAZA31ZB2jaq4sn9iCmHeHefysjw1vtCfBHuZAKqqZAlZAXLLr0Cw6TZBEweq7cjvZB2QjPmd8cS9wh4qR9jeDP4FMb96lc7yug4HULl0oS9p1IB8z1ZBQE7eBaxKmQ2Nx6JLf5M4Id3qvuHpz7GwNnUMl4DGWKGJczs41DI3LUTBTpxD5j"
+var token = ""
 
 // Struct for POST webhook body
 type WebhookEvent struct {
