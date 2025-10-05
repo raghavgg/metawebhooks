@@ -270,6 +270,8 @@ func main() {
 			handleGreetingRequest(w, r)
 		case http.MethodPut:
 			handleHealthCheck(w, r)
+		case http.MethodHead:
+			handleHealthCheck(w, r)
 		default:
 			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		}
